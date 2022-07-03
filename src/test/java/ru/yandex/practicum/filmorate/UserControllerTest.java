@@ -28,48 +28,6 @@ public class UserControllerTest  {
     }
 
     @Test
-    public void shouldTrowValidationExpressionWhenEmailIsEmpty () {
-        user.setEmail("");
-        Exception exception = assertThrows(ValidationException.class, () -> userController.create(user));
-        assertEquals("Введен некорректный email", exception.getMessage());
-    }
-
-    @Test
-    public void shouldTrowValidationExpressionWhenEmailHasOnlyOneGap () {
-        user.setEmail(" ");
-        Exception exception = assertThrows(ValidationException.class, () -> userController.create(user));
-        assertEquals("Введен некорректный email", exception.getMessage());
-    }
-
-    @Test
-    public void shouldTrowValidationExpressionWhenEmailHasNoChar () {
-        user.setEmail("anna1336on.ru");
-        Exception exception = assertThrows(ValidationException.class, () -> userController.create(user));
-        assertEquals("Введен некорректный email", exception.getMessage());
-    }
-
-    @Test
-    public void shouldTrowValidationExpressionWhenLoginIsEmpty () {
-        user.setLogin("");
-        Exception exception = assertThrows(ValidationException.class, () -> userController.create(user));
-        assertEquals("Введен некорректный логин", exception.getMessage());
-    }
-
-    @Test
-    public void shouldTrowValidationExpressionWhenLoginHasBlanks () {
-        user.setLogin("Anna 13");
-        Exception exception = assertThrows(ValidationException.class, () -> userController.create(user));
-        assertEquals("Введен некорректный логин", exception.getMessage());
-    }
-
-    @Test
-    public void shouldTrowValidationExpressionWhenBirthdayIsInFuture () {
-        user.setBirthday(LocalDate.of(2022, DECEMBER,13));
-        Exception exception = assertThrows(ValidationException.class, () -> userController.create(user));
-        assertEquals("Введена некорректная дата рождения", exception.getMessage());
-    }
-
-    @Test
     public void shouldUseLoginWhenNameIsEmpty () throws ValidationException {
         user.setName("");
         String expectedName = user.getLogin();
@@ -86,7 +44,7 @@ public class UserControllerTest  {
     }
 
     @Test
-    public void createNewUser_createdUserShouldBeNotNull() {
+    public void createNewUser_createdUserShouldBeNotNull() throws NullPointerException {
         user = User.builder().build();
         Exception exception = assertThrows(NullPointerException.class, () -> userController.create(user));
     }
