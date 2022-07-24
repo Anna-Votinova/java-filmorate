@@ -58,6 +58,24 @@ public class InMemoryFilmStorage implements FilmStorage {
         throw new FilmNotFoundException("Фильм еще не существует");
     }
 
+    @Override
+    public String deleteFilm (Long id) throws FilmNotFoundException {
+        log.info("Удаляем фильм с id {}", id);
+        for (Film fl: films) {
+            if (id.equals(fl.getId())) {
+                if (fl.getLikes().isEmpty()) {
+                    films.remove(fl);
+                } else {
+                    fl.getLikes().clear();
+                    films.remove(fl);
+                }
+            }
+            log.info("Фильм с id {} удален", id);
+            return "Фильм удален";
+        }
+        throw new FilmNotFoundException("Фильм еще не существует");
+    }
+
     private void findFilmInSet(Film film) throws ValidationException {
         for (Film fl: films) {
             if (fl.getId().equals(film.getId())) {

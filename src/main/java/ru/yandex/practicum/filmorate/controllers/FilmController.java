@@ -7,7 +7,7 @@ import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -17,10 +17,10 @@ import java.util.Set;
 @RestController
 public class FilmController {
 
-private final InMemoryFilmStorage storage;
+private final FilmStorage storage;
 private final FilmService service;
 
-    public FilmController(InMemoryFilmStorage storage, FilmService service) {
+    public FilmController(FilmStorage storage, FilmService service) {
         this.storage = storage;
         this.service = service;
     }
@@ -53,6 +53,11 @@ private final FilmService service;
     @DeleteMapping("/films/{id}/like/{userId}")
     public String deleteLikesToSetOfFilm (@PathVariable Long id, @PathVariable Long userId) throws UserNotFoundException, FilmNotFoundException {
         return service.deleteLikesToSetOfFilm(id,userId);
+    }
+
+    @DeleteMapping("/films/{id}")
+    public String deleteFilm(@PathVariable Long id) throws FilmNotFoundException {
+        return storage.deleteFilm(id);
     }
 
     @GetMapping("/films/popular")

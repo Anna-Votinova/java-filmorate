@@ -11,4 +11,5 @@ public interface UserStorage {
     User create(User user) throws ValidationException;
     User update(User user) throws UserNotFoundException;
     User findUserById(Long id) throws UserNotFoundException;
+    String deleteUser(Long id) throws UserNotFoundException;
 }

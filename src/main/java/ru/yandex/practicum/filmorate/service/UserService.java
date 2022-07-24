@@ -64,8 +64,6 @@ public class UserService {
         friendFriends.remove(id);
         friend.setFriends(friendFriends);
 
-        //findUserById(id).getFriends().remove(findUserById(friendId).getId());
-        //findUserById(friendId).getFriends().remove(findUserById(id).getId());
         log.info("Пользователи c id {} и {} удалены друг у друга из друзей", id, friendId);
         return String.format("%d и %d больше не друзья", id, friendId);
     }

@@ -12,4 +12,5 @@ public interface FilmStorage {
     Film create(Film film) throws ValidationException;
     Film update (Film film) throws FilmNotFoundException;
     Film findFilmById(Long id) throws FilmNotFoundException;
+    String deleteFilm (Long id) throws FilmNotFoundException;
 }

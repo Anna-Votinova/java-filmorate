@@ -56,10 +56,30 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User findUserById(Long id) throws UserNotFoundException {
+        log.info("Ищем юзера с id {}", id);
         for (User us: users) {
             if (id.equals(us.getId()) && id > 0) {
+                log.info("Возвращаем юзера с id {}", id);
                 return us;
             }
+        }
+        throw new UserNotFoundException("Юзер еще не существует");
+    }
+
+    @Override
+    public String deleteUser(Long id) throws UserNotFoundException {
+        log.info("Удаляем юзера с id {}", id);
+        for (User us: users) {
+            if (id.equals(us.getId())) {
+                if (us.getFriends().isEmpty()) {
+                    users.remove(us);
+                } else{
+                    us.getFriends().clear();
+                    users.remove(us);
+                }
+            }
+            log.info("Юзер с id {} удален", id);
+            return "Юзер удален";
         }
         throw new UserNotFoundException("Юзер еще не существует");
     }

@@ -6,7 +6,7 @@ import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import javax.validation.Valid;
 import java.util.Set;
@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 @RestController
 public class UserController {
 
-    private final InMemoryUserStorage storage;
+    private final UserStorage storage;
     private final UserService userService;
 
-    public UserController(InMemoryUserStorage storage, UserService userService) {
+    public UserController(UserStorage storage, UserService userService) {
         this.storage = storage;
         this.userService = userService;
     }
@@ -53,6 +53,11 @@ public class UserController {
     public String deleteUserByIdFromSetOfFriends (@PathVariable Long id,
                                                   @PathVariable Long friendId) throws UserNotFoundException {
         return userService.deleteUserByIdFromSetOfFriends(id, friendId);
+    }
+
+    @DeleteMapping("/users/{id}")
+    public String deleteUser(@PathVariable Long id) throws UserNotFoundException {
+        return storage.deleteUser(id);
     }
 
     @GetMapping("/users/{id}/friends/common/{otherId}")
