@@ -25,9 +25,6 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма не может быть отрицательной или равна нулю")
     private long duration;
-    private int rate;
+    private long rate;
     private Set<Long> likes;
-    private List<Genre> genres;
-    private MPARating rating;
-
 }
