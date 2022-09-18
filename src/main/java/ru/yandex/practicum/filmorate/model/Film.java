@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.utilities.AfterOrEqualData;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -24,6 +25,9 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма не может быть отрицательной или равна нулю")
     private long duration;
-    private long rate;
+    private int rate;
     private Set<Long> likes;
+    private List<Genre> genres;
+    private MPARating rating;
+
 }
