@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.utilities.AfterOrEqualData;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -26,4 +27,6 @@ public class Film {
     private long duration;
     private long rate;
     private Set<Long> likes;
+    private List<Genre> genres;
+    private MPARating rating;
 }
