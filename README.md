@@ -1,6 +1,6 @@
 # java-filmorate
 Template repository for Filmorate project.
-![DBdiagram](https://dbdiagram.io/d/63275cf80911f91ba5d9226a)
+![image](https://user-images.githubusercontent.com/97476027/191098529-43c4ac96-e263-4cc1-9e3a-71faa3e91e29.png)
 
 
 Examples of queries
