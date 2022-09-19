@@ -1,7 +1,6 @@
 # java-filmorate
 Template repository for Filmorate project.
-![image](https://user-images.githubusercontent.com/97476027/191098529-43c4ac96-e263-4cc1-9e3a-71faa3e91e29.png)
-
+![Untitled (2)](https://user-images.githubusercontent.com/97476027/191099068-299a6d83-c385-456e-bae6-0e7a6f4d6783.png)
 
 Examples of queries
 
@@ -24,3 +23,4 @@ INNER JOIN likes AS l ON f.id = l.film_id
 GROUP BY l.film_id
 ORDER BY rating DESC
 LIMIT 10;
+
