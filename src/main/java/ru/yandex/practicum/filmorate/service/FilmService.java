@@ -2,13 +2,16 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dao.*;
 import ru.yandex.practicum.filmorate.exceptions.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.model.FilmGenre;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,53 +20,134 @@ import java.util.stream.Collectors;
 @Service
 public class FilmService {
 
-    private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
-    private final Map<Long, Set<Long>> filmLikes = new HashMap<>();
+    private final FilmDao filmStorage;
+    private final UserDao userDao;
+    private final FilmGenreDao filmGenreDao;
+    private final LikeDao likeDao;
+    private final GenresDao genresDao;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(@Qualifier("filmJdbcDao") FilmDao filmStorage,
+                       @Qualifier("userJdbcDao") UserDao userDao,
+                       LikeDao likeDao,
+                       FilmGenreDao filmGenreDao,
+                       GenresDao genresDao) {
         this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
+        this.userDao = userDao;
+        this.likeDao = likeDao;
+        this.filmGenreDao = filmGenreDao;
+        this.genresDao = genresDao;
     }
+
+    public List<Film> findAll() {
+        List<Film> films = filmStorage.findAll();
+        for (Film film : films) {
+            fillGenre(film);
+        }
+        return films;
+    }
+    public Film save(Film film) throws ValidationException {
+        Film created = filmStorage.save(film);
+        if (Objects.nonNull(film.getGenres())) {
+            //delete all old link create
+            List<FilmGenre> filmGenres = filmGenreDao.findAll(created);
+            filmGenres.forEach(filmGenre -> filmGenreDao.delete(filmGenre.getFilmId(), filmGenre.getGenreId()));
+
+            //create new
+            film.getGenres().forEach(genre -> filmGenreDao.save(FilmGenre.builder()
+                    .genreId(genre.getId())
+                    .filmId(created.getId())
+                    .build()));
+        }
+
+        return fillGenre(created);
+    }
+    public Film update (Film film) {
+        checkFilmId(film.getId());
+        Film updated = filmStorage.update(film);
+
+        if (Objects.nonNull(film.getGenres())) {
+            //delete all old link create
+            List<FilmGenre> filmGenres = filmGenreDao.findAll(updated);
+            filmGenres.forEach(filmGenre -> filmGenreDao.delete(filmGenre.getFilmId(), filmGenre.getGenreId()));
+
+            //create new
+            film.getGenres().forEach(genre -> filmGenreDao.save(FilmGenre.builder()
+                    .genreId(genre.getId())
+                    .filmId(updated.getId())
+                    .build()));
+        }
+
+        return fillGenre(updated);
+    }
+    public void deleteFilm (Long id) throws FilmNotFoundException {
+        filmStorage.deleteFilm(id);
+    }
+
 
     public Film findFilmById(Long id) throws FilmNotFoundException {
+        checkFilmId(id);
         log.info("Попытка получить фильм по id {}",
                 id);
-        return filmStorage.findFilmById(id);
+        Film film = fillGenre(filmStorage.findFilmById(id));
+
+       return film;
     }
 
-    public void addLikesToSetOfFilm (Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
+    public void addLikeToFilm(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
         log.info("Пользователь с id {} хочет поставить лайк фильму с id {}", userId, filmId);
+
+        if (userId < 0) {
+            throw new UserNotFoundException("User not found with id " + userId);
+        }
+
         Film film = findFilmById(filmId);
-        Set<Long> filmL = checkNullSet(film.getLikes());
-        filmL.add(userStorage.findUserById(userId).getId());
-        film.setLikes(filmL);
-        log.info("Пользователь с id {} поставил лайк фильму с id {}", userId, filmId);
-        filmLikes.put(filmId, filmStorage.findFilmById(filmId).getLikes());
+        User user = userDao.findUserById(userId);
+        likeDao.addLikeToFilm(film.getId(), user.getId());
+
+        log.info("Пользователь с id {} поставил лайк фильму с id {}", user.getId(), film.getId());
     }
 
-    public String deleteLikesToSetOfFilm (Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
+    public String deleteLikeToFilm(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
         log.info("Пользователь с id {} хочет удалить лайк с фильма с id {}", userId, filmId);
-        findFilmById(filmId).getLikes().remove(userStorage.findUserById(userId).getId());
+
+        if (userId < 0) {
+            throw new UserNotFoundException("User not found with id " + userId);
+        }
+
+        Film film = findFilmById(filmId);
+        User user = userDao.findUserById(userId);
+        likeDao.deleteLikeToFilm(film.getId(), user.getId());
+
         log.info("Пользователь с id {} удалил лайк с фильма с id {}", userId, filmId);
-        filmLikes.put(filmId, filmStorage.findFilmById(filmId).getLikes());
         return "Лайк удален";
     }
 
     public Collection<Film> getPopularFilms(Integer count) {
         log.info("Пользователь запросил список популярных фильмов");
-        final Comparator<Film> comparator = Comparator
-                .comparingInt(o -> filmLikes.getOrDefault(o.getId(), new HashSet<>()).size());
+
+        List<Film> films = filmStorage.findPopularFilm(count);
         log.info("Передан список популярных фильмов");
-        return filmStorage.findAll().stream().sorted(comparator.reversed())
-                .limit(count).collect(Collectors.toList());
+        return films;
     }
 
-    private Set<Long> checkNullSet(Set<Long> set) {
-        if (Objects.isNull(set)) {
-            return new HashSet<>();
+    private void checkFilmId (Long id) throws FilmNotFoundException {
+        if (id < 1L || id == null) {
+            throw new FilmNotFoundException("Фильм не может быть обновлен или найден," +
+                    "так как id не может быть меньше 1 ничему не равняться");
         }
-        return set;
+        log.info("Фильм не может быть обновлен или найден," +
+                "так как id не может быть меньше 1 или ничему не равняться");
+    }
+
+    private Film fillGenre(Film film) {
+        List<Genre> genres = filmGenreDao.findAll(film)
+                .stream()
+                .map(FilmGenre::getGenreId)
+                .map(genresDao::findGenreById)
+                .collect(Collectors.toList());
+
+        film.setGenres(genres);
+        return film;
     }
 }
