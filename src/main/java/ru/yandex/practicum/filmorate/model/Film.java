@@ -25,7 +25,4 @@ public class Film {
 
     @JsonIgnore
     private Set<Long> likes;
-    @JsonIgnore
-    private MpaRating rating;
-
 }

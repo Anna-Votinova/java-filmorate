@@ -46,6 +46,7 @@ public class FilmService {
         }
         return films;
     }
+
     public Film save(Film film) throws ValidationException {
         Film created = filmStorage.save(film);
         if (Objects.nonNull(film.getGenres())) {
@@ -62,6 +63,7 @@ public class FilmService {
 
         return fillGenre(created);
     }
+
     public Film update (Film film) {
         checkFilmId(film.getId());
         Film updated = filmStorage.update(film);
@@ -80,6 +82,8 @@ public class FilmService {
 
         return fillGenre(updated);
     }
+
+
     public void deleteFilm (Long id) throws FilmNotFoundException {
         filmStorage.deleteFilm(id);
     }
@@ -89,9 +93,8 @@ public class FilmService {
         checkFilmId(id);
         log.info("Попытка получить фильм по id {}",
                 id);
-        Film film = fillGenre(filmStorage.findFilmById(id));
 
-       return film;
+        return fillGenre(filmStorage.findFilmById(id));
     }
 
     public void addLikeToFilm(Long filmId, Long userId) throws UserNotFoundException, FilmNotFoundException {
@@ -132,7 +135,7 @@ public class FilmService {
     }
 
     private void checkFilmId (Long id) throws FilmNotFoundException {
-        if (id < 1L || id == null) {
+        if (id < 1L) {
             throw new FilmNotFoundException("Фильм не может быть обновлен или найден," +
                     "так как id не может быть меньше 1 ничему не равняться");
         }
