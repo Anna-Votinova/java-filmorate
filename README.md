@@ -1,4 +1,5 @@
 # java-filmorate
+
 Filmorate project by Anna Votinova 
 
 ![DBdiagram](https://dbdiagram.io/d/63275cf80911f91ba5d9226a)
@@ -25,4 +26,5 @@ INNER JOIN likes AS l ON f.id = l.film_id
 GROUP BY l.film_id
 ORDER BY rating DESC
 LIMIT 10;
+
 
