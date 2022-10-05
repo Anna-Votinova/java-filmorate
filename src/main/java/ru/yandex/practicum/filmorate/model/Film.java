@@ -25,6 +25,5 @@ public class Film {
 
     @JsonIgnore
     private Set<Long> likes;
-    private List<Genre> genres;
-    private MPARating rating;
+
 }
