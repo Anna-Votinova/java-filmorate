@@ -64,13 +64,10 @@ public class UserJdbcDao implements UserDao {
 
     @Override
     public User findUserById(Long id) throws UserNotFoundException {
-        User user;
         String sqlQuery = "select * from USERS where id = ?";
-        user = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUser, id);
-        if(user == null) {
-            throw new UserNotFoundException("Юзер не существует");
-        }
-        return user;
+        List<User> users = jdbcTemplate.query(sqlQuery, this::mapRowToUser, id);
+
+        return users.size() == 0? null : users.get(0);
     }
 
     private User mapRowToUser(ResultSet resultSet, int rowNum) throws SQLException {

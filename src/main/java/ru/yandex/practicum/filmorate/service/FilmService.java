@@ -63,22 +63,25 @@ public class FilmService {
         return fillGenre(created);
     }
     public Film update (Film film) {
-        checkFilmId(film.getId());
-        Film updated = filmStorage.update(film);
+        if (Objects.nonNull(film) && Objects.nonNull(findFilmById(film.getId()))) {
+            Film updated = filmStorage.update(film);
 
-        if (Objects.nonNull(film.getGenres())) {
-            //delete all old link create
-            List<FilmGenre> filmGenres = filmGenreDao.findAll(updated);
-            filmGenres.forEach(filmGenre -> filmGenreDao.delete(filmGenre.getFilmId(), filmGenre.getGenreId()));
+            if (Objects.nonNull(film.getGenres())) {
+                //delete all old link create
+                List<FilmGenre> filmGenres = filmGenreDao.findAll(updated);
+                filmGenres.forEach(filmGenre -> filmGenreDao.delete(filmGenre.getFilmId(), filmGenre.getGenreId()));
 
-            //create new
-            film.getGenres().forEach(genre -> filmGenreDao.save(FilmGenre.builder()
-                    .genreId(genre.getId())
-                    .filmId(updated.getId())
-                    .build()));
+                //create new
+                film.getGenres().forEach(genre -> filmGenreDao.save(FilmGenre.builder()
+                        .genreId(genre.getId())
+                        .filmId(updated.getId())
+                        .build()));
+            }
+
+            return fillGenre(updated);
         }
 
-        return fillGenre(updated);
+        throw new FilmNotFoundException("Фильм не может быть обновлен или найден");
     }
     public void deleteFilm (Long id) throws FilmNotFoundException {
         filmStorage.deleteFilm(id);

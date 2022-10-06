@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.FilmPopularCount;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.MpaRating;
 import ru.yandex.practicum.filmorate.dao.FilmDao;
+import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -97,9 +98,9 @@ public class FilmJdbcDao implements FilmDao {
     @Override
     public Film findFilmById(Long id) {
         String sqlQuery = "select * from FILMS where id = ?";
-        Film film = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilm, id);
+        List<Film> films = jdbcTemplate.query(sqlQuery, this::mapRowToFilm, id);
 
-        return film;
+        return films.size() == 0? null : films.get(0);
     }
 
     private Film mapRowToFilm(ResultSet resultSet, int rowNum) throws SQLException {

@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.dao.UserDao;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -23,15 +24,19 @@ public class UserService {
     public Set<User> findAll() {
         return userDao.findAll();
     }
+
     public User create(User user) throws ValidationException {
         checkUserName(user);
         return userDao.create(user);
     }
+
     public User update(User user) throws UserNotFoundException {
-        checkUserId(user.getId());
-        checkUserName(user);
-        return userDao.update(user);
+        if (Objects.nonNull(user) && Objects.nonNull(findUserById(user.getId()))) {
+            return userDao.update(user);
+        }
+        throw new UserNotFoundException("Юзер не может быть обновлен или найден");
     }
+
     public void deleteUser(Long id) throws UserNotFoundException {
         userDao.deleteUser(id);
     }
@@ -52,7 +57,7 @@ public class UserService {
         return user;
     }
 
-    private void checkUserId (Long id) throws UserNotFoundException {
+    private void checkUserId(Long id) throws UserNotFoundException {
         if (id < 1L || id == null) {
             throw new UserNotFoundException("Юзер не может быть обновлен или найден," +
                     "так как id не может быть меньше 1 или ничему не равняться");
@@ -61,7 +66,7 @@ public class UserService {
                 "так как id не может быть меньше 1 или ничему не равняться");
     }
 
-    private User checkUserName (User user) {
+    private User checkUserName(User user) {
         if (user.getName().isBlank()) {
             log.debug("Вместо имени установлен логин");
             user.setName(user.getLogin());
