@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controllers;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -18,44 +19,51 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({FilmNotFoundException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleFilmNotFoundException(final FilmNotFoundException e) {
-        return new ErrorResponse(
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleFilmNotFoundException(final FilmNotFoundException e) {
+        return new ResponseEntity<>(new ErrorResponse(
                 e.getMessage()
-        );
+        ), HttpStatus.NOT_FOUND);
     }
+//    @ExceptionHandler({FilmNotFoundException.class})
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+//    public ErrorResponse handleFilmNotFoundException(final FilmNotFoundException e) {
+//        return  new ErrorResponse(
+//                e.getMessage()
+//        );
+//    }
 
-    @ExceptionHandler({UserNotFoundException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
-    }
+        @ExceptionHandler({UserNotFoundException.class})
+        @ResponseStatus(HttpStatus.NOT_FOUND)
+        public ErrorResponse handleUserNotFoundException ( final UserNotFoundException e){
+            return new ErrorResponse(
+                    e.getMessage()
+            );
+        }
 
-    @ExceptionHandler({MpaNotFoundException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleMpaNotFoundException(final MpaNotFoundException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
-    }
+        @ExceptionHandler({MpaNotFoundException.class})
+        @ResponseStatus(HttpStatus.NOT_FOUND)
+        public ErrorResponse handleMpaNotFoundException ( final MpaNotFoundException e){
+            return new ErrorResponse(
+                    e.getMessage()
+            );
+        }
 
-    @ExceptionHandler({GenreNotFoundException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleMpaNotFoundException(final GenreNotFoundException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
-    }
+        @ExceptionHandler({GenreNotFoundException.class})
+        @ResponseStatus(HttpStatus.NOT_FOUND)
+        public ErrorResponse handleMpaNotFoundException ( final GenreNotFoundException e){
+            return new ErrorResponse(
+                    e.getMessage()
+            );
+        }
 
-    @ExceptionHandler({NullPointerException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNullPointerException(final NullPointerException e) {
-        return new ErrorResponse(
-                e.getMessage()
-        );
-    }
+        @ExceptionHandler({NullPointerException.class})
+        @ResponseStatus(HttpStatus.NOT_FOUND)
+        public ErrorResponse handleNullPointerException ( final NullPointerException e){
+            return new ErrorResponse(
+                    e.getMessage()
+            );
+        }
 
     /*
     @ExceptionHandler
@@ -68,4 +76,4 @@ public class ErrorHandler {
 
      */
 
-}
+    }
