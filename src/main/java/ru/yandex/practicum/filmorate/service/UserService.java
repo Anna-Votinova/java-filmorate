@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class UserService {
     }
 
     public User create(User user) throws ValidationException {
-        checkUserName(user);
+        setUserName(user);
         return userDao.create(user);
     }
 
@@ -53,24 +54,20 @@ public class UserService {
         if (user == null) {
             throw new UserNotFoundException("Юзер c таким id еще не занесен в таблицу");
         }
-        log.info("Юзер c таким id еще не занесен в таблицу");
         return user;
     }
 
     private void checkUserId(Long id) throws UserNotFoundException {
-        if (id < 1L || id == null) {
+        if (id < 1L) {
             throw new UserNotFoundException("Юзер не может быть обновлен или найден," +
-                    "так как id не может быть меньше 1 или ничему не равняться");
+                    "так как id не может быть меньше 1");
         }
-        log.info("Юзер не может быть обновлен или найден," +
-                "так как id не может быть меньше 1 или ничему не равняться");
     }
 
-    private User checkUserName(User user) {
+    private void setUserName(User user) {
         if (user.getName().isBlank()) {
             log.debug("Вместо имени установлен логин");
             user.setName(user.getLogin());
         }
-        return user;
     }
 }

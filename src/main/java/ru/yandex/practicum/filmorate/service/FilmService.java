@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,12 +22,13 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     private final FilmDao filmStorage;
+
     private final UserDao userDao;
     private final FilmGenreDao filmGenreDao;
     private final LikeDao likeDao;
     private final GenresDao genresDao;
 
-    @Autowired
+   @Autowired
     public FilmService(@Qualifier("filmJdbcDao") FilmDao filmStorage,
                        @Qualifier("userJdbcDao") UserDao userDao,
                        LikeDao likeDao,
@@ -101,7 +103,7 @@ public class FilmService {
         log.info("Пользователь с id {} хочет поставить лайк фильму с id {}", userId, filmId);
 
         if (userId < 0) {
-            throw new UserNotFoundException("User not found with id " + userId);
+            throw new UserNotFoundException("Не найден юзер с Id" + userId);
         }
 
         Film film = findFilmById(filmId);
@@ -115,7 +117,7 @@ public class FilmService {
         log.info("Пользователь с id {} хочет удалить лайк с фильма с id {}", userId, filmId);
 
         if (userId < 0) {
-            throw new UserNotFoundException("User not found with id " + userId);
+            throw new UserNotFoundException("Не найден юзер с Id " + userId);
         }
 
         Film film = findFilmById(filmId);
@@ -137,10 +139,8 @@ public class FilmService {
     private void checkFilmId (Long id) throws FilmNotFoundException {
         if (id < 1L) {
             throw new FilmNotFoundException("Фильм не может быть обновлен или найден," +
-                    "так как id не может быть меньше 1 ничему не равняться");
+                    "так как id не может быть меньше 1");
         }
-        log.info("Фильм не может быть обновлен или найден," +
-                "так как id не может быть меньше 1 или ничему не равняться");
     }
 
     private Film fillGenre(Film film) {

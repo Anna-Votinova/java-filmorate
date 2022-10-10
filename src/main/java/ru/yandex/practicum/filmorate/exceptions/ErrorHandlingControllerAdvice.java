@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.exceptions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+@Slf4j
 @ControllerAdvice
 public class ErrorHandlingControllerAdvice {
 
@@ -19,6 +21,7 @@ public class ErrorHandlingControllerAdvice {
     @ResponseBody
     ValidationErrorResponse onConstraintValidationException(
             ConstraintViolationException e) {
+        log.error(e.getMessage(), e);
         ValidationErrorResponse error = new ValidationErrorResponse();
         for (ConstraintViolation violation : e.getConstraintViolations()) {
             error.getViolations().add(
@@ -32,6 +35,7 @@ public class ErrorHandlingControllerAdvice {
     @ResponseBody
     ValidationErrorResponse onMethodArgumentNotValidException(
             MethodArgumentNotValidException e) {
+        log.error(e.getMessage(), e);
         ValidationErrorResponse error = new ValidationErrorResponse();
         for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
             error.getViolations().add(

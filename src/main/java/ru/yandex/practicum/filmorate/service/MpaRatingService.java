@@ -21,7 +21,7 @@ public class MpaRatingService {
     }
     public MpaRating findRatingById(int id) {
         if (id < 1) {
-            throw new MpaNotFoundException("Не может быть обновлен или найден, так как id не может быть меньше 1");
+            throw new MpaNotFoundException("Такого рейтинга не существует");
         }
         return storage.findRatingById(id);
     }

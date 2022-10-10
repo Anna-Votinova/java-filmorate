@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,15 +12,10 @@ import java.util.List;
 
 
 @RestController
+@RequiredArgsConstructor
 public class GenresController {
 
     private final GenresService service;
-
-    @Autowired
-    public GenresController(GenresService service) {
-        this.service = service;
-    }
-
 
     @GetMapping("/genres")
     public List<Genre> findAll() {

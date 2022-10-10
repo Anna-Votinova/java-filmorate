@@ -25,7 +25,7 @@ public class GenresService {
    }
    public Genre findGenreById(long id) {
        if (id < 1) {
-           throw new GenreNotFoundException("Такого рейтинга не существует");
+           throw new GenreNotFoundException("Такого жанра не существует");
        }
        return storage.findGenreById(id);
    }
