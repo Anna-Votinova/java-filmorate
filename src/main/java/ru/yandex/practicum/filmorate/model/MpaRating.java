@@ -9,9 +9,9 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @Data
 @AllArgsConstructor
-public class Genre {
+public class MpaRating {
     private int id;
     @NotBlank
     private String name;
-}
 
+}
