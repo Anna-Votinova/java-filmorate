@@ -8,7 +8,7 @@ Filmorate - a service, that helps you to find the movie you need
 
 Stack:
 
-Spring Boot, Spring Data JPA, Hibernate, Maven, Lombok, PostgreSQL, Docker, JUnit, MockMvc.
+Spring Boot, Maven, Lombok, SQL, JDBC
 
 
 
